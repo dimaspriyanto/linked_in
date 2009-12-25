@@ -1,0 +1,39 @@
+LinkedIn
+========
+
+LinkedIn API Implementation for Rails
+
+
+Example
+=======
+Here is sample how to use the LinkedIn library:
+
+  api_key = 'YOUR_APP_API_KEY'
+  secret_key = 'YOUR_APP_SECRET_KEY'
+  callback_url = 'http://localhost:3000/linkedin_callback'
+
+  oauth = LinkedIn::Oauth.new(api_key, secret_key)
+  oauth.request_token :oauth_callback => callback_url
+  oauth.request_token.authorize_url
+  => "https://api.linkedin.com/uas/oauth/authorize?oauth_token=fed5647e-4a72-48eb-a033-05ac1efe1ca0"
+
+Use the authorize_url above as redirection url for user to do authorization process,
+if user authorize it we will get params[:oauth_verifier] in our "callback_url",
+use it to authorize from request
+
+  oauth_verifier = params[:oauth_verifier]
+  oauth.authorize_from_request(oauth.request_token.token, oauth.request_token.secret, oauth_verifier)
+  => ["e1a44d7f-224a-4622-b10c-xxxxxxxxxxxx", "c8a45c95-b5e6-4d2e-a36e-xxxxxxxxxxxx"]
+
+If we got verified then we assign that oauth object to create new LinkedIn::Base object,
+and then here is the sample code how to access the API:
+
+  linkedin = LinkedIn::Base.new(oauth)
+  puts linkedin.connections
+  puts linkedin.profile
+  puts linkedin.people_search "dimas"
+
+
+
+
+Copyright (c) 2009 Dimas Priyanto [dimas.priyanto@gmail.com], released under the MIT license
